@@ -1,61 +1,64 @@
-using Locust.Spatial;
+using Locust.Api;
 
 namespace Locust;
 
-internal static class Program
+public static class Program
 {
-    private static readonly QuadTree GlobalTree = new();
-
-    private static void Main()
+    public static void Main(string[] args)
     {
-        // Ping a LLPoint with roughly 10 m angular resolution and print the containing node.
-        var ping = new LLPing(new LLPoint(20d, 20d), 1, 0.0001, 1);
-        var containingNode = PingOperations.Apply(GlobalTree, ping);
+        var builder = WebApplication.CreateBuilder(args);
 
+        builder.Services.AddSingleton<QuadTreeApiService>();
 
-        List<QuadTreeNode> pingNodeList = new ();
-        pingNodeList.Add(containingNode);
+        var app = builder.Build();
 
-
-        //Console.WriteLine($"Ping bounds: {ping.Bounds}");
-        Console.WriteLine($"Containing node bounds: {containingNode.Bounds}");
-
-        // print each node level on the way to the ping's containing node, and layer number
-        var node = GlobalTree.Root;
-        int layernumber = 0;
-
-        while (node != containingNode)
+        app.MapGet("/", () => Results.Ok(new
         {
-            Console.WriteLine($"Layer: {layernumber:D2} // Node bounds: {node.Bounds}");
-            node = node.EnsureChildContaining(ping.Center);
-            layernumber++;
-        }
+            service = "Locust",
+            endpoints = new[]
+            {
+                "POST /pings",
+                "POST /pings/batch",
+                "POST /queries/grid"
+            }
+        }));
 
-        // extract a 2d array of ping strengths for a given bounding box and resolution
-        var bounds = new LLRect(19.9999, 19.9999, 0.0002, 0.0002);
-        int widthcount  = 10;
-        int heightcount = 10;
-        var strengthArray = QuadTreeNavigation.StrengthValuesToArray(GlobalTree, bounds, widthcount, heightcount);
+        app.MapPost("/pings", (RegisterPingRequest request, QuadTreeApiService service) =>
+        {
+            try
+            {
+                return Results.Ok(service.RegisterPing(request));
+            }
+            catch (ArgumentException ex)
+            {
+                return Results.BadRequest(new ErrorResponse(ex.Message, ex.ParamName));
+            }
+        });
 
-        // write the strength array to csv file
-        var csvFilePath = "ping_strengths.csv";
+        app.MapPost("/pings/batch", (RegisterPingsRequest request, QuadTreeApiService service) =>
+        {
+            try
+            {
+                return Results.Ok(service.RegisterPings(request));
+            }
+            catch (ArgumentException ex)
+            {
+                return Results.BadRequest(new ErrorResponse(ex.Message, ex.ParamName));
+            }
+        });
 
+        app.MapPost("/queries/grid", (GridQueryRequest request, QuadTreeApiService service) =>
+        {
+            try
+            {
+                return Results.Ok(service.QueryGrid(request));
+            }
+            catch (ArgumentException ex)
+            {
+                return Results.BadRequest(new ErrorResponse(ex.Message, ex.ParamName));
+            }
+        });
 
-        KoreNumeric2DArrayIO<double>.SaveToCSVFile(strengthArray, csvFilePath, 2);
-        Console.WriteLine($"Ping strengths written to {csvFilePath}");
-
-
-
-        // Decay the pings after 1 second
-        System.Threading.Thread.Sleep(1100);
-        QuadTreeNavigation.DecayPings(pingNodeList);
-
-
-        // save a second csv file with the decayed ping strengths
-        var decayedCsvFilePath = "ping_strengths_decayed.csv";
-        var decayedStrengthArray = QuadTreeNavigation.StrengthValuesToArray(GlobalTree, bounds, widthcount, heightcount);
-        KoreNumeric2DArrayIO<double>.SaveToCSVFile(decayedStrengthArray, decayedCsvFilePath, 2);
-        Console.WriteLine($"Decayed ping strengths written to {decayedCsvFilePath}");
-
+        app.Run();
     }
 }

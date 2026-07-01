@@ -12,6 +12,8 @@ using System;
 
 public class KoreMovingDouble
 {
+    private readonly object _sync = new();
+
     public double StartValue        { get; set; }
     public double TargetValue       { get; set; }
     public double StartRuntimeSecs  { get; set; }
@@ -20,13 +22,26 @@ public class KoreMovingDouble
     // --------------------------------------------------------------------------------------------
 
     public static KoreMovingDouble Zero => new (0d, 0d, 0d);
-    public bool IsZero => (StartValue < 0.0001d) && (TargetValue < 0.0001d) && (ClockDurationSecs < 0.0001d);
+    public bool IsZero
+    {
+        get
+        {
+            lock (_sync)
+            {
+                return (StartValue < 0.0001d) && (TargetValue < 0.0001d) && (ClockDurationSecs < 0.0001d);
+            }
+        }
+    }
+
     public void SetZero()
     {
-        StartValue        = 0d;
-        TargetValue       = 0d;
-        StartRuntimeSecs  = 0d;
-        ClockDurationSecs = 0d;
+        lock (_sync)
+        {
+            StartValue        = 0d;
+            TargetValue       = 0d;
+            StartRuntimeSecs  = 0d;
+            ClockDurationSecs = 0d;
+        }
     }
 
     // --------------------------------------------------------------------------------------------
@@ -41,33 +56,42 @@ public class KoreMovingDouble
 
     public void Setup(double startval, double targetval, double clockduration)
     {
-        StartValue        = startval;
-        TargetValue       = targetval;
-        StartRuntimeSecs  = KoreCentralTime.RuntimeSecs;
-        ClockDurationSecs = clockduration;
+        lock (_sync)
+        {
+            StartValue        = startval;
+            TargetValue       = targetval;
+            StartRuntimeSecs  = KoreCentralTime.RuntimeSecs;
+            ClockDurationSecs = clockduration;
+        }
     }
 
     // Instantly forces the CurrentValue to the CommandedValue
     public void ForceToValue(double commandedValue)
     {
-        StartValue  = commandedValue;
-        TargetValue = commandedValue;
-        StartRuntimeSecs  = KoreCentralTime.RuntimeSecs;
-        ClockDurationSecs = 0d;
+        lock (_sync)
+        {
+            StartValue        = commandedValue;
+            TargetValue       = commandedValue;
+            StartRuntimeSecs  = KoreCentralTime.RuntimeSecs;
+            ClockDurationSecs = 0d;
+        }
     }
 
     public double CurrentValue
     {
         get
         {
-            double elapsedSecs = KoreCentralTime.RuntimeSecs - StartRuntimeSecs;
-            if (elapsedSecs >= ClockDurationSecs)
+            lock (_sync)
             {
-                ForceToValue(TargetValue);
-                return TargetValue;
-            }
-            else
-            {
+                double elapsedSecs = KoreCentralTime.RuntimeSecs - StartRuntimeSecs;
+                if (elapsedSecs >= ClockDurationSecs)
+                {
+                    StartValue        = TargetValue;
+                    StartRuntimeSecs  = KoreCentralTime.RuntimeSecs;
+                    ClockDurationSecs = 0d;
+                    return TargetValue;
+                }
+
                 double fraction = elapsedSecs / ClockDurationSecs;
                 return StartValue + (TargetValue - StartValue) * fraction;
             }
