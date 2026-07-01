@@ -45,5 +45,17 @@ internal static class Program
         Console.WriteLine($"Ping strengths written to {csvFilePath}");
 
 
+
+        // Decay the pings after 1 second
+        System.Threading.Thread.Sleep(1100);
+        QuadTreeNavigation.DecayPings(pingNodeList);
+
+
+        // save a second csv file with the decayed ping strengths
+        var decayedCsvFilePath = "ping_strengths_decayed.csv";
+        var decayedStrengthArray = QuadTreeNavigation.StrengthValuesToArray(GlobalTree, bounds, widthcount, heightcount);
+        KoreNumeric2DArrayIO<double>.SaveToCSVFile(decayedStrengthArray, decayedCsvFilePath, 2);
+        Console.WriteLine($"Decayed ping strengths written to {decayedCsvFilePath}");
+
     }
 }

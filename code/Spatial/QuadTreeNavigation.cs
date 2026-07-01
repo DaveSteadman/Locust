@@ -132,16 +132,25 @@ public static class QuadTreeNavigation
 
     // --------------------------------------------------------------------------------------------
 
+    // Usage: QuadTreeNavigation.DecayPings(pingNodeList);
+
     public static void DecayPings(List<QuadTreeNode> pingNodeList)
     {
         ArgumentNullException.ThrowIfNull(pingNodeList);
+
+        if (pingNodeList.Count == 0)
+        {
+            return;
+        }
 
         foreach (var node in pingNodeList)
         {
             if (node.NodePing is not null)
             {
-                if (node.NodePing.IsZero)
+                if (node.NodePing.CurrentValue <= 0.0001d)
                 {
+                    node.NodePing = KoreMovingDouble.Zero;
+
                     // Loop through the parent node levels, and prune the node at the point where all children have decayed to zero strength.
                     // Using AccumulateStrengthFromNode to accumulate the strength of all children
                     var currentNode = node;
