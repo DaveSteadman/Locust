@@ -1,2 +1,14 @@
 /code/obj
 /code/bin
+/src/Locust.Api/bin/Debug
+/src/Locust.Api/obj/Debug
+/src/Locust.Common/bin/Debug
+/src/Locust.Common/obj/Debug
+/src/Locust.Heatmap/obj/Debug
+/src/Locust.InputSimulator/bin/Debug
+/src/Locust.InputSimulator/obj/Debug
+/src/Locust.Heatmap/bin/Debug
+/src/Locust.Common/obj
+/src/Locust.Heatmap/obj
+/src/Locust.InputSimulator/obj
+/src/Locust.Api/obj

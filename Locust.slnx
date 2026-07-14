@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Locust.Api/Locust.Api.csproj" />
+    <Project Path="src/Locust.Common/Locust.Common.csproj" />
+    <Project Path="src/Locust.Heatmap/Locust.Heatmap.csproj" />
+    <Project Path="src/Locust.InputSimulator/Locust.InputSimulator.csproj" />
+  </Folder>
+</Solution>
