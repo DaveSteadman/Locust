@@ -1,0 +1,62 @@
+{
+    "position":  {
+                     "lonDegs":  -1.082,
+                     "latDegs":  50.68
+                 },
+    "centerDirectionDegs":  45,
+    "arcWidthDegs":  60,
+    "rangeDegs":  0.5,
+    "lastObservedWorldTick":  488,
+    "lastObservedWorldTrackCount":  50,
+    "lastDetectedTrackCount":  2,
+    "lastVisibleTrackIds":  [
+                                18,
+                                40
+                            ],
+    "lastVisibleTracks":  [
+                              {
+                                  "id":  18,
+                                  "position":  {
+                                                   "lonDegs":  -0.6534370131294773,
+                                                   "latDegs":  50.86930469513538
+                                               },
+                                  "courseDegs":  117.86191850601602,
+                                  "speedDegsPerSecond":  0.016666666666666666
+                              },
+                              {
+                                  "id":  40,
+                                  "position":  {
+                                                   "lonDegs":  -0.926411240336857,
+                                                   "latDegs":  50.7449251919785
+                                               },
+                                  "courseDegs":  34.037016170995734,
+                                  "speedDegsPerSecond":  0.016666666666666666
+                              }
+                          ],
+    "lastPublishedPingCount":  2,
+    "lastPublishedPingRadiusDegs":  0.0004491555874955084,
+    "lastPublishedPingDecaySecs":  1,
+    "lastPublishedPings":  [
+                               {
+                                   "position":  {
+                                                    "lonDegs":  -0.6534370131294773,
+                                                    "latDegs":  50.86930469513538
+                                                },
+                                   "strength":  10,
+                                   "radiusDegs":  0.0004491555874955084,
+                                   "decaySecs":  1
+                               },
+                               {
+                                   "position":  {
+                                                    "lonDegs":  -0.926411240336857,
+                                                    "latDegs":  50.7449251919785
+                                                },
+                                   "strength":  10,
+                                   "radiusDegs":  0.0004491555874955084,
+                                   "decaySecs":  1
+                               }
+                           ],
+    "lastPublishSucceeded":  true,
+    "lastError":  null,
+    "updatedAtUtc":  "2026-07-15T22:53:32.4644424+00:00"
+}

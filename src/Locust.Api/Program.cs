@@ -7,6 +7,7 @@ public static class Program
         var builder = WebApplication.CreateBuilder(args);
 
         builder.Services.AddSingleton<QuadTreeApiService>();
+        builder.Services.AddHostedService<QuadTreeDecayWorker>();
 
         var app = builder.Build();
 
@@ -84,5 +85,47 @@ public static class Program
         });
 
         app.Run();
+    }
+}
+
+internal sealed class QuadTreeDecayWorker : BackgroundService
+{
+    private static readonly TimeSpan Interval = TimeSpan.FromMilliseconds(500);
+    private readonly QuadTreeApiService _service;
+    private readonly ILogger<QuadTreeDecayWorker> _logger;
+
+    public QuadTreeDecayWorker(QuadTreeApiService service, ILogger<QuadTreeDecayWorker> logger)
+    {
+        _service = service;
+        _logger = logger;
+    }
+
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        while (!stoppingToken.IsCancellationRequested)
+        {
+            try
+            {
+                var retained = _service.DecayAndPruneExpiredPings();
+                _logger.LogDebug("QuadTree decay pass retained {RetainedPingNodes} active ping nodes.", retained);
+            }
+            catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
+            {
+                break;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "QuadTree decay pass failed.");
+            }
+
+            try
+            {
+                await Task.Delay(Interval, stoppingToken);
+            }
+            catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
+            {
+                break;
+            }
+        }
     }
 }

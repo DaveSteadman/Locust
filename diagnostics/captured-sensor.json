@@ -1,0 +1,43 @@
+{
+    "position":  {
+                     "lonDegs":  -1.082,
+                     "latDegs":  50.68
+                 },
+    "centerDirectionDegs":  45,
+    "arcWidthDegs":  60,
+    "rangeDegs":  0.5,
+    "lastObservedWorldTick":  368,
+    "lastObservedWorldTrackCount":  50,
+    "lastDetectedTrackCount":  1,
+    "lastVisibleTrackIds":  [
+                                28
+                            ],
+    "lastVisibleTracks":  [
+                              {
+                                  "id":  28,
+                                  "position":  {
+                                                   "lonDegs":  -0.9001220662454706,
+                                                   "latDegs":  51.110002629322864
+                                               },
+                                  "courseDegs":  10.329484125669438,
+                                  "speedDegsPerSecond":  0.016666666666666666
+                              }
+                          ],
+    "lastPublishedPingCount":  1,
+    "lastPublishedPingRadiusDegs":  0.0004491555874955084,
+    "lastPublishedPingDecaySecs":  1,
+    "lastPublishedPings":  [
+                               {
+                                   "position":  {
+                                                    "lonDegs":  -0.9001220662454706,
+                                                    "latDegs":  51.110002629322864
+                                                },
+                                   "strength":  10,
+                                   "radiusDegs":  0.0004491555874955084,
+                                   "decaySecs":  1
+                               }
+                           ],
+    "lastPublishSucceeded":  true,
+    "lastError":  null,
+    "updatedAtUtc":  "2026-07-15T22:51:31.1213201+00:00"
+}

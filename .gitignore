@@ -12,3 +12,7 @@
 /src/Locust.Heatmap/obj
 /src/Locust.InputSimulator/obj
 /src/Locust.Api/obj
+/src/Locust.SensorSimulator001/obj
+/src/Locust.WorldSim/bin
+/src/Locust.WorldSim/obj
+/src/Locust.SensorSimulator001/bin

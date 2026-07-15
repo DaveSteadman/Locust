@@ -5,6 +5,7 @@ public sealed class QuadTreeApiService
     private readonly object _sync = new();
     private readonly List<int> _pingNodes = [];
     private readonly QuadTree<QuadTreePayload> _tree = new();
+    private const double ActiveValueThreshold = 0.0001d;
 
     // --------------------------------------------------------------------------------------------
     // MARK: Register
@@ -57,6 +58,46 @@ public sealed class QuadTreeApiService
         }
 
         return new RegisterPingsResponse(responses.Count, responses);
+    }
+
+    public int DecayAndPruneExpiredPings()
+    {
+        lock (_sync)
+        {
+            QuadTreeNavigation.DecayPings(_tree, _pingNodes);
+
+            var retained = 0;
+            var seen = new HashSet<int>();
+            for (var index = 0; index < _pingNodes.Count; index++)
+            {
+                var nodeIndex = _pingNodes[index];
+                if (!seen.Add(nodeIndex))
+                {
+                    continue;
+                }
+
+                var node = _tree.GetNode(nodeIndex);
+                if (!node.HasPayload)
+                {
+                    continue;
+                }
+
+                if (node.Payload.GetCurrentValue() <= ActiveValueThreshold)
+                {
+                    continue;
+                }
+
+                _pingNodes[retained] = nodeIndex;
+                retained++;
+            }
+
+            if (retained < _pingNodes.Count)
+            {
+                _pingNodes.RemoveRange(retained, _pingNodes.Count - retained);
+            }
+
+            return retained;
+        }
     }
 
     // --------------------------------------------------------------------------------------------

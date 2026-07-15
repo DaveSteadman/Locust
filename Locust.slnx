@@ -4,5 +4,7 @@
     <Project Path="src/Locust.Common/Locust.Common.csproj" />
     <Project Path="src/Locust.Heatmap/Locust.Heatmap.csproj" />
     <Project Path="src/Locust.InputSimulator/Locust.InputSimulator.csproj" />
+    <Project Path="src/Locust.SensorSimulator001/Locust.SensorSimulator001.csproj" />
+    <Project Path="src/Locust.WorldSim/Locust.WorldSim.csproj" />
   </Folder>
 </Solution>

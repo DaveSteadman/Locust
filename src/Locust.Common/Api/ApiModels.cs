@@ -90,4 +90,46 @@ public sealed record TreeRectQueryResponse(
     int HeightCount,
     TreeRectCellResponse[][] Nodes);
 
+public sealed record WorldTrackResponse(
+    int Id,
+    LLPoint Position,
+    double CourseDegs,
+    double SpeedDegsPerSecond,
+    double VelocityLonDegsPerSecond,
+    double VelocityLatDegsPerSecond);
+
+public sealed record WorldSnapshotResponse(
+    LLRect Bounds,
+    int Tick,
+    DateTimeOffset GeneratedAtUtc,
+    IReadOnlyList<WorldTrackResponse> Tracks);
+
+public sealed record SensorArcState(
+    LLPoint Position,
+    double CenterDirectionDegs,
+    double ArcWidthDegs,
+    double RangeDegs);
+
+public sealed record UpdateSensorArcRequest(
+    double LonDegs,
+    double LatDegs,
+    double CenterDirectionDegs,
+    double ArcWidthDegs,
+    double RangeDegs)
+{
+    public SensorArcState ToState()
+    {
+        return new SensorArcState(new LLPoint(LonDegs, LatDegs), CenterDirectionDegs, ArcWidthDegs, RangeDegs);
+    }
+}
+
+public sealed record SensorArcResponse(
+    LLPoint Position,
+    double CenterDirectionDegs,
+    double ArcWidthDegs,
+    double RangeDegs,
+    int LastObservedWorldTick,
+    int LastDetectedTrackCount,
+    DateTimeOffset UpdatedAtUtc);
+
 public sealed record ErrorResponse(string Error, string? ParamName);
